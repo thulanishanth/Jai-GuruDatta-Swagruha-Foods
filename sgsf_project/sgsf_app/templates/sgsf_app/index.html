@@ -1,0 +1,246 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jai Gurudatta Swagruha Foods — Animated</title>
+
+  <style>
+    *{box-sizing:border-box; margin:0; padding:0}
+
+    body{
+      height:100vh;
+      overflow:hidden;
+      font-family: Arial, sans-serif;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:white;     
+      color:#222;
+      position:relative;
+    }
+
+    /* 🌈 MULTICOLOR FLOATING CIRCLES */
+    .circle{
+        position:absolute;
+        bottom:-150px;
+        border-radius:50%;
+        animation: floatUp 6s linear infinite;
+        opacity:0.7;
+        pointer-events:none;
+        z-index:0;
+        filter: blur(3px);
+    }
+
+    @keyframes floatUp{
+      0%{ transform:translateY(0) scale(1); opacity:0.8; }
+      100%{ transform:translateY(-120vh) scale(1.5); opacity:0; }
+    }
+
+    .card{
+      padding:35px;
+      border-radius:20px;
+      width:min(800px, 90%);
+      text-align:center;
+      z-index:5;
+    }
+
+    .phrase{
+      display:flex;
+      justify-content:center;
+      gap:14px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    .word{
+      font-size: 32px;
+      font-weight:800;
+      padding:8px 16px;
+      border-radius:12px;
+      opacity:0;
+      transform:translateY(20px);
+      position:relative;
+    }
+
+    .w1{ background:#ffb70333; color:#a86f00; }
+    .w2{ background:#3b82f644; color:#1a4fa3; }
+    .w3{ background:#10b98133; color:#0a6a4b; }
+    .w4{ background:#fb850044; color:#8a4600; }
+
+    @keyframes popIn {
+      0% { opacity:0; transform:translateY(26px) scale(.8); }
+      60%{ opacity:1; transform:translateY(-4px) scale(1.07); }
+      100%{ opacity:1; transform:translateY(0) scale(1); }
+    }
+
+    @keyframes floaty {
+      0%{ transform: translateY(0); }
+      50%{ transform: translateY(-6px); }
+      100%{ transform: translateY(0); }
+    }
+
+    @keyframes shimmer {
+      0%{ transform: translateX(-120%); opacity:0; }
+      30%{ opacity:1; }
+      100%{ transform:translateX(120%); opacity:0; }
+    }
+
+    .word.active{
+      animation: floaty 4s ease-in-out infinite;
+    }
+
+    .word.shimmer::after{
+      animation: shimmer 1.3s ease-in-out;
+    }
+
+    .word::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.8),
+        transparent
+      );
+      transform:translateX(-150%);
+      opacity:0;
+    }
+
+    .menu-button{
+      background-color: orange;
+      padding: 10px 20px;
+      border-radius: 15px;
+      text-decoration: none;
+      color: black;
+      border: 1px solid blue;
+      transition: all 0.3s ease;
+      animation: floatButton 3s ease-in-out infinite;
+    }
+
+    @keyframes floatButton {
+      0%, 100% { transform: translateY(0); box-shadow: 0 0 0 rgba(255,165,0,0); }
+      50% { transform: translateY(-5px); box-shadow: 0 0 15px rgba(255,165,0,0.6); }
+    }
+
+    .menu-button:hover{
+      transform: scale(1.1);
+      color: blue;
+      background-color: white;
+      box-shadow: 0 0 25px rgba(255,165,0,0.8);
+      padding-left: 30px;
+      padding-right: 30px;
+    }
+
+    .button{
+      padding-top: 20px;
+    }
+
+    /* ⭐ IMAGE ON LEFT + RIGHT */
+    .side-images{
+      position:absolute;
+      top:50%;
+      width:100%;
+      transform: translateY(-50%);
+      display:flex;
+      justify-content:space-between;
+      padding:0 25px;
+      z-index:3;
+    }
+
+    .side-images img{
+      height:120px;
+      animation: floatImg 4s ease-in-out infinite;
+    }
+
+    @keyframes floatImg {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ⭐ LEFT + RIGHT FLOATING IMAGES ⭐ -->
+  <div class="side-images">
+      <img src="{% static 'images/god.jpg' %}" alt="god">
+      <img src="{% static 'images/god2.jpg' %}" alt="god">
+  </div>
+
+  <!-- 🌈 FLOATING CIRCLES -->
+  <script>
+    const colors = ["#ff6b6b", "#ffd93d", "#6bcB77", "#4d96ff", "#d946ef", "#ff8e3c"];
+
+    for(let i=0; i<30; i++){
+      let c = document.createElement("div");
+      c.className = "circle";
+
+      let size = 20 + Math.random()*50;
+      c.style.width = c.style.height = size + "px";
+
+      c.style.left = Math.random()*100 + "vw";
+
+      c.style.background = colors[Math.floor(Math.random()*colors.length)];
+
+      c.style.animationDuration = (4 + Math.random()*5) + "s";
+
+      document.body.appendChild(c);
+    }
+  </script>
+
+  <div class="card">
+    <h2 style="color:#333;">Welcome to</h2>
+
+    <div class="phrase" id="phrase"></div>
+
+    <p style="color:#555; margin-top:8px;">
+      Fresh. Homemade. Delivered with devotion.<br><br>
+
+      <div class="button">
+        <a href="{% url 'login' %}" class="menu-button">Login</a>
+        <a href="{% url 'signup' %}" class="menu-button" style="margin-left:10px;">Signup</a>
+      </div>
+    </p>
+  </div>
+
+  <!-- ⭐ ANIMATED PHRASE SCRIPT ⭐ -->
+  <script>
+    const words = ["Jai","Gurudatta","Swagruha","Foods"];
+    const classes = ["w1","w2","w3","w4"];
+    const container = document.getElementById("phrase");
+
+    function build(){
+      container.innerHTML = "";
+      words.forEach((w,i)=>{
+        const span = document.createElement("span");
+        span.className = "word "+classes[i];
+        span.innerHTML = w;
+        container.appendChild(span);
+      });
+    }
+
+    async function animatePhrase(){
+      build();
+      const nodes = document.querySelectorAll(".word");
+
+      for(let i=0;i<nodes.length;i++){
+        let n = nodes[i];
+        n.style.animation = "popIn .5s ease forwards";
+        await new Promise(r=>setTimeout(r,260));
+
+        n.classList.add("shimmer");
+        setTimeout(()=> n.classList.remove("shimmer"),1200);
+
+        n.classList.add("active");
+      }
+    }
+
+    animatePhrase();
+  </script>
+
+</body>
+</html>

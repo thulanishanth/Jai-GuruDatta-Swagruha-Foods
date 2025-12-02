@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home - Sri Gurudatta Swagruha Foods</title>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background: url("food_bg.jpg") no-repeat center center/cover;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .overlay {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.45);
+        top: 0;
+        left: 0;
+    }
+
+    .home-card {
+        position: relative;
+        background: rgba(255,255,255,0.15);
+        padding: 40px;
+        width: 420px;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        z-index: 10;
+        text-align: center;
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+        color: white;
+        text-shadow: 2px 2px 5px black;
+    }
+
+    p {
+        color: #ffeb3b;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .link-btn {
+        display: inline-block;
+        margin: 12px;
+        padding: 12px 22px;
+        background: linear-gradient(45deg, #ff4e50, #f9d423);
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: 0.3s;
+        box-shadow: 0 4px 18px rgba(255, 78, 80, 0.6);
+    }
+
+    .link-btn:hover {
+        transform: scale(1.08);
+        box-shadow: 0 6px 20px rgba(255, 78, 80, 0.7);
+    }
+
+</style>
+</head>
+<body>
+
+<div class="overlay"></div>
+
+<div class="home-card">
+    <h1>Hello {{ request.user.username }} 👋</h1>
+    <p>Enjoy the delicious Swagruha traditional foods ❤️</p>
+
+    <a href="{% url 'menu' %}" class="link-btn">View Menu</a>
+    <a href="{% url 'logout' %}" class="link-btn">Logout</a>
+</div>
+
+</body>
+</html>

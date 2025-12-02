@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Menu</title>
+</head>
+<body>
+
+<h1>Our Menu</h1>
+
+{% for item in items %}
+<div style="margin-bottom:15px;">
+    <h3>{{ item.name }} — ₹{{ item.price }}</h3>
+    <p>{{ item.description }}</p>
+</div>
+{% empty %}
+<p>No items added yet.</p>
+{% endfor %}
+
+<a href="{% url 'home' %}">Back to Home</a>
+
+</body>
+</html>
