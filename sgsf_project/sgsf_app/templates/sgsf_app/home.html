@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -361,20 +362,20 @@
     <h2>Our Special Categories</h2>
     <div class="card-container">
         <div class="card">
-            <img src="breakfast.jpg" alt="">
+         <img src="{% static 'images/bf.jpeg' %}" alt="Breakfast">
             <p>Breakfast Items</p>
         </div>
         <div class="card">
-            <img src="lunch.jpg" alt="">
+             <img src="{% static 'images/lunch.jpeg' %}" alt="Breakfast">
             <p>Lunch Menu</p>
         </div>
         <div class="card">
-            <img src="pickles.jpg" alt="">
-            <p>Pickles & Snacks</p>
+ <img src="{% static 'images/pickes2.jpeg' %}" alt="Breakfast">           
+  <p>Pickles & Snacks</p>
         </div>
         <div class="card">
-            <img src="sweets.jpg" alt="">
-            <p>Sweets</p>
+ <img src="{% static 'images/sweets.jpeg' %}" alt="Breakfast">          
+   <p>Sweets</p>
         </div>
     </div>
 </section>
