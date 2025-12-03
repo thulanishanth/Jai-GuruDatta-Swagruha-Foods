@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,86 +7,426 @@
 <title>Home - Sri Gurudatta Swagruha Foods</title>
 
 <style>
-    body {
-        margin: 0;
-        padding: 0;
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
         font-family: Arial, sans-serif;
-        background: url("food_bg.jpg") no-repeat center center/cover;
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        scroll-behavior: smooth; /* Smooth scroll for internal links */
     }
 
-    .overlay {
-        position: absolute;
-        width: 100%;
+    html, body {
         height: 100%;
-        background: rgba(0,0,0,0.45);
+    }
+
+    /* ================== TOP NAVBAR ================== */
+    .navbar {
+        position: fixed;
         top: 0;
-        left: 0;
-    }
-
-    .home-card {
-        position: relative;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 30px;
         background: rgba(255,255,255,0.15);
-        padding: 40px;
-        width: 420px;
-        border-radius: 20px;
         backdrop-filter: blur(10px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-        z-index: 10;
-        text-align: center;
-        animation: fadeIn 1s ease-in-out;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        z-index: 100;
     }
 
-    @keyframes fadeIn {
-        0% { opacity: 0; transform: translateY(20px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
-
-    h1 {
+    .nav-left h2 {
         color: white;
-        text-shadow: 2px 2px 5px black;
+        margin: 0;
+        text-shadow: 2px 2px 4px black;
     }
 
-    p {
+    .nav-right a {
+        margin-left: 25px;
         color: #ffeb3b;
+        text-decoration: none;
         font-size: 18px;
         font-weight: bold;
-    }
-
-    .link-btn {
-        display: inline-block;
-        margin: 12px;
-        padding: 12px 22px;
-        background: linear-gradient(45deg, #ff4e50, #f9d423);
-        color: white;
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: bold;
         transition: 0.3s;
-        box-shadow: 0 4px 18px rgba(255, 78, 80, 0.6);
     }
 
-    .link-btn:hover {
-        transform: scale(1.08);
-        box-shadow: 0 6px 20px rgba(255, 78, 80, 0.7);
+    .nav-right a:hover {
+        color: white;
+        text-shadow: 0 0 10px yellow;
     }
+
+    section {
+        height: 100vh; /* Full screen height for each section */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        text-align: center;
+        padding-top: 80px; /* Space for fixed navbar */
+        position: relative;
+    }
+
+    /* ================== HERO SECTION ================== */
+    .hero{
+        width: 100%;
+        background: linear-gradient(45deg,
+            #ff9a9e, #fad0c4, #fbc2eb, #a18cd1,
+            #fbc2eb, #84fab0, #8fd3f4, #a6c1ee
+        );
+        background-size: 400% 400%;
+        animation: gradientMove 12s ease infinite;
+        overflow:hidden;
+    }
+
+    @keyframes gradientMove{
+        0%{ background-position:0% 50%; }
+        50%{ background-position:100% 50%; }
+        100%{ background-position:0% 50%; }
+    }
+
+    .hero h1{
+        font-size: 45px;
+        color: white;
+        font-weight: 800;
+        text-shadow: 2px 2px 5px rgba(0,0,0,0.4);
+        animation: fadeUp 1.2s ease-out;
+    }
+
+    .hero p{
+        margin-top: 10px;
+        font-size: 18px;
+        color: #fff;
+        animation: fadeUp 1.6s ease-out;
+    }
+
+    @keyframes fadeUp{
+        0%{ transform:translateY(30px); opacity:0; }
+        100%{ transform:translateY(0); opacity:1; }
+    }
+
+    .order-btn{
+        margin-top: 20px;
+        background: white;
+        color: #ff4d4d;
+        padding: 12px 26px;
+        font-size: 18px;
+        border-radius: 30px;
+        font-weight: bold;
+        text-decoration: none;
+        display: inline-block;
+        transition: 0.3s;
+        animation: popIn 1.9s ease-out;
+    }
+
+    .order-btn:hover{
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(255,255,255,0.7);
+        background: #fffcf7;
+    }
+
+    @keyframes popIn{
+        0%{ transform:scale(0.6); opacity:0; }
+        100%{ transform:scale(1); opacity:1; }
+    }
+
+    .floating-food{
+        position:absolute;
+        font-size: 35px;
+        animation: float 7s ease-in-out infinite;
+        opacity: 0.7;
+    }
+
+    @keyframes float{
+        0%{ transform: translateY(0); }
+        50%{ transform: translateY(-35px); }
+        100%{ transform: translateY(0); }
+    }
+
+    /* ================= CATEGORIES ================= */
+    .categories{
+        background:#fff;
+    }
+
+    .categories h2{
+        font-size: 32px;
+        margin-bottom: 20px;
+        color:#333;
+    }
+
+    .card-container{
+        display:flex;
+        justify-content:center;
+        gap:20px;
+        flex-wrap:wrap;
+    }
+
+    .card{
+        width:220px;
+        background:white;
+        padding:20px;
+        border-radius:20px;
+        box-shadow:0 5px 15px rgba(0,0,0,0.1);
+        transition:0.3s;
+    }
+
+    .card:hover{
+        transform: translateY(-10px);
+        box-shadow:0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .card img{
+        width:100%;
+        height:130px;
+        border-radius:15px;
+        object-fit:cover;
+    }
+
+    .card p{
+        margin-top:10px;
+        font-size: 18px;
+        font-weight: bold;
+        color:#444;
+    }
+
+    /* ================= WHY CHOOSE US ================= */
+    .why{
+        background: #fafafa;
+    }
+
+    .why h2{
+        font-size: 32px;
+        margin-bottom:25px;
+    }
+
+    .why-list{
+        display:flex;
+        justify-content:center;
+        gap:25px;
+        flex-wrap: wrap;
+    }
+
+    .why-box{
+        width:250px;
+        background:white;
+        padding:20px;
+        border-radius:15px;
+        box-shadow:0 5px 15px rgba(0,0,0,0.1);
+        text-align:center;
+    }
+
+    .why-box span{
+        font-size:35px;
+        display:block;
+        margin-bottom:10px;
+    }
+
+    .why-box p{
+        font-size:17px;
+        font-weight:600;
+        color:#444;
+    }
+    /* ================= CONTACT SECTION ================= */
+.contact{
+    height: 100vh;
+    background: #f0f0f0;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 20px;
+}
+
+.contact h2{
+    font-size: 32px;
+    margin-bottom: 15px;
+    color:#333;
+}
+
+.contact p{
+    font-size: 18px;
+    margin-bottom: 30px;
+    color:#666;
+}
+
+.contact-form{
+    display:flex;
+    flex-direction: column;
+    gap:15px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.contact-form input,
+.contact-form textarea{
+    padding:12px 15px;
+    font-size:16px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    resize: none;
+}
+
+.contact-form button{
+    padding:12px 20px;
+    font-size:18px;
+    background: #ff4d4d;
+    color: white;
+    font-weight: bold;
+    border:none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition:0.3s;
+}
+
+.contact-form button:hover{
+    background: #ff1a1a;
+    transform: scale(1.05);
+}
+/* ================= FOOTER ================= */
+.footer {
+    background: #222;
+    color: #fff;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.footer h3 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.footer p {
+    font-size: 16px;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+.footer .social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.footer .social-icons a {
+    color: #ffeb3b;
+    font-size: 24px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.footer .social-icons a:hover {
+    color: white;
+    transform: scale(1.2);
+}
+
+.footer .copyright {
+    font-size: 14px;
+    color: #888;
+}
+
 
 </style>
 </head>
 <body>
 
-<div class="overlay"></div>
+<!-- ================= TOP NAVBAR ================= -->
+<div class="navbar">
+    <div class="nav-left">
+        <h2>SGSF Foods</h2>
+    </div>
 
-<div class="home-card">
-    <h1>Hello {{ request.user.username }} 👋</h1>
-    <p>Enjoy the delicious Swagruha traditional foods ❤️</p>
-
-    <a href="{% url 'menu' %}" class="link-btn">View Menu</a>
-    <a href="{% url 'logout' %}" class="link-btn">Logout</a>
+    <div class="nav-right">
+    <a href="#hero">Home</a>
+    <a href="#categories">Menu</a>
+    <a href="#why">Why SGSF Foods</a>
+    <a href="#contact">Contact</a>
+    <a href="{% url 'profile' %}">Profile</a>
 </div>
+</div>
+
+<!-- ================= HERO SECTION ================= -->
+<section id="hero" class="hero">
+    <div class="floating-food" style="left:10%; animation-delay:0s;">🍛</div>
+    <div class="floating-food" style="left:50%; animation-delay:1s;">🍪</div>
+    <div class="floating-food" style="left:80%; animation-delay:2s;">🥣</div>
+    <div class="floating-food" style="left:30%; animation-delay:3s;">🍱</div>
+
+    <div>
+        <h1>Freshly Homemade • Delivered with Love</h1>
+        <p>Your favorite Swagruha traditional foods, made with purity & devotion.</p>
+        <a href="{% url 'menu' %}" class="order-btn">Order Now</a>
+    </div>
+</section>
+
+<!-- ================= CATEGORIES ================= -->
+<section id="categories" class="categories">
+    <h2>Our Special Categories</h2>
+    <div class="card-container">
+        <div class="card">
+         <img src="{% static 'images/bf.jpeg' %}" alt="Breakfast">
+            <p>Breakfast Items</p>
+        </div>
+        <div class="card">
+             <img src="{% static 'images/lunch.jpeg' %}" alt="Breakfast">
+            <p>Lunch Menu</p>
+        </div>
+        <div class="card">
+ <img src="{% static 'images/pickes2.jpeg' %}" alt="Breakfast">           
+  <p>Pickles & Snacks</p>
+        </div>
+        <div class="card">
+ <img src="{% static 'images/sweets.jpeg' %}" alt="Breakfast">          
+   <p>Sweets</p>
+        </div>
+    </div>
+</section>
+
+<!-- ================= WHY CHOOSE US ================= -->
+<section id="why" class="why">
+    <h2>Why Choose Sri Gurudatta Swagruha Foods?</h2>
+    <div class="why-list">
+        <div class="why-box">
+            <span>🥣</span>
+            <p>100% Homemade Fresh Food</p>
+        </div>
+        <div class="why-box">
+            <span>🛕</span>
+            <p>Prepared with Devotion & Purity</p>
+        </div>
+        <div class="why-box">
+            <span>🥗</span>
+            <p>Healthy & Hygienic Cooking</p>
+        </div>
+        <div class="why-box">
+            <span>⏱️</span>
+            <p>On-Time Delivery</p>
+        </div>
+    </div>
+</section>
+<!-- ================= CONTACT SECTION ================= -->
+<section id="contact" class="contact">
+    <h2>Contact Us</h2>
+    <p>We’d love to hear from you! Reach out for orders or inquiries.</p>
+
+    <form class="contact-form">
+        <input type="text" placeholder="Your Name" required>
+        <input type="email" placeholder="Your Email" required>
+        <textarea placeholder="Your Message" required></textarea>
+        <button type="submit">Send Message</button>
+    </form>
+</section>
+<!-- ================= FOOTER SECTION ================= -->
+<footer class="footer">
+    <div class="footer-content">
+        <h3>Sri Gurudatta Swagruha Foods</h3>
+        <p>Delivering homemade goodness with love & devotion.</p>
+        <div class="social-icons">
+            <a href="#"><span>🐦</span></a>
+            <a href="#"><span>📘</span></a>
+            <a href="#"><span>📸</span></a>
+        </div>
+        <p class="copyright">&copy; 2025 SGSF Foods. All rights reserved.</p>
+    </div>
+</footer>
 
 </body>
 </html>

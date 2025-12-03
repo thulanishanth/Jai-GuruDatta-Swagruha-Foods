@@ -4,8 +4,13 @@ from django.contrib.auth.decorators import login_required
 from .forms import SignupForm
 from .models import MenuItem
 
+# -------------------------
+# AUTHENTICATION VIEWS
+# -------------------------
+
 def index(request):
     return render(request, 'sgsf_app/index.html')
+
 
 def signup_view(request):
     if request.method == "POST":
@@ -17,13 +22,13 @@ def signup_view(request):
         form = SignupForm()
     return render(request, 'sgsf_app/signup.html', {'form': form})
 
+
 def login_view(request):
     if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
         user = authenticate(request, username=username, password=password)
-
         if user:
             login(request, user)
             return redirect('home')
@@ -32,15 +37,34 @@ def login_view(request):
 
     return render(request, 'sgsf_app/login.html')
 
+
+def logout_view(request):
+    logout(request)
+    return redirect('index')
+
+
+# -------------------------
+# MAIN PAGES
+# -------------------------
+
 @login_required
 def home(request):
     return render(request, 'sgsf_app/home.html')
+
 
 @login_required
 def menu(request):
     items = MenuItem.objects.all()
     return render(request, "sgsf_app/menu.html", {"items": items})
 
-def logout_view(request):
-    logout(request)
-    return redirect('index')
+
+@login_required
+def about(request):
+    return render(request, 'sgsf_app/about.html')
+
+
+
+@login_required
+def profile(request):
+    # Pass the logged-in user object to template
+    return render(request, 'sgsf_app/profile.html', {'user': request.user})

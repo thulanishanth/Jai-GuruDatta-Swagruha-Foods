@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Profile</title>
+
+<style>
+    body {
+        margin: 0;
+        padding: 50px;
+        font-family: Arial, sans-serif;
+        background: #fafafa;
+    }
+
+    .profile-box {
+        max-width: 400px;
+        margin: auto;
+        padding: 30px;
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    h2 {
+        margin-bottom: 10px;
+    }
+
+    .logout-btn {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 18px;
+        background: red;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="profile-box">
+    <h2>Hello, {{ user.username }} 👋</h2>
+    <p>Email: {{ user.email }}</p>
+
+    <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+</div>
+
+</body>
+</html>
