@@ -1,4 +1,5 @@
-<!doctype html>
+{% load static %}
+<Doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -233,136 +234,144 @@
 </footer>
 
 <script>
-  // sample data (you can expand or replace images)
+  // ---------------------------------------------
+  // FIXED MENU DATA GENERATION
+  // ---------------------------------------------
   const MENU = [
-    {id:1,category:'Breakfast',name:'Idly (2 pcs)',desc:'Soft steamed idlis with chutney',price:40,img:'bf.jpeg',tag:'Veg'},
-    {id:2,category:'Breakfast',name:'Masala Dosa',desc:'Crispy dosa with potato masala',price:80,img:'menu.jpeg',tag:'Veg'},
-    {id:3,category:'Lunch',name:'Sambar Rice',desc:'Traditional sambar rice',price:90,img:'menu.jpeg',tag:'Veg'},
-    {id:4,category:'Lunch',name:'Veg Biryani',desc:'Homestyle vegetable biryani',price:140,img:'menu.jpeg',tag:'Veg'},
-    {id:5,category:'Pickles',name:'Mango Pickle Jar',desc:'Tangy homemade mango pickle',price:120,img:'pickles.jpeg',tag:'Homemade'},
-    {id:6,category:'Snacks',name:'Murukulu (250g)',desc:'Crispy traditional snack',price:70,img:'pickles.jpeg',tag:'Snack'},
-    {id:7,category:'Sweets',name:'Laddu (per pc)',desc:'Sweet laddus made with ghee',price:25,img:'sweets.jpeg',tag:'Sweet'},
-    {id:8,category:'Sweets',name:'Mysore Pak',desc:'Buttery Mysore Pak pieces',price:60,img:'sweets.jpeg',tag:'Sweet'},
-    {id:9,category:'Lunch',name:'Lemon Rice',desc:'Tangy lemon rice with peanuts',price:75,img:'menu.jpeg',tag:'Veg'},
-    {id:10,category:'Breakfast',name:'Pongal',desc:'Comforting soft pongal',price:55,img:'bf.jpeg',tag:'Veg'},
+    {% for item in items %}
+      {
+        id: {{ item.id }},
+        // use escapejs to prevent crashes from quotes or special characters
+        category: "{{ item.category|escapejs }}",
+        name: "{{ item.name|escapejs }}",
+        desc: "{{ item.description|escapejs }}", 
+        price: {{ item.price }},
+        // This checks: Does the item have an image? 
+        // YES -> Use item.image.url
+        // NO  -> Use the static fallback image
+        img: "{% if item.image %}{{ item.image.url }}{% else %}{% static 'images/god.jpg' %}{% endif %}",
+        tag: "{{ item.tag|default:'Veg'|escapejs }}"
+      },
+    {% endfor %}
   ];
 
-  const categories = ['All', ...Array.from(new Set(MENU.map(m=>m.category)))];
+  console.log("DEBUG: Menu Items Loaded:", MENU); // Check your browser console for this!
 
-  // render filters
+  // ---------------------------------------------
+  // RENDER LOGIC
+  // ---------------------------------------------
+  const categories = ['All', ...Array.from(new Set(MENU.map(m=>m.category)))];
   const filtersEl = document.getElementById('filters');
-  categories.forEach(cat=>{
+  const grid = document.getElementById('menuGrid');
+  const emptyState = document.getElementById('emptyState');
+
+  // Render Filter Buttons
+  filtersEl.innerHTML = ''; // Clear existing buttons
+  categories.forEach(cat => {
     const b = document.createElement('button');
-    b.className='filter-btn'+(cat==='All'?' active':'');
-    b.textContent=cat;
+    b.className = 'filter-btn' + (cat === 'All' ? ' active' : '');
+    b.textContent = cat;
     b.dataset.cat = cat;
-    b.addEventListener('click',()=>{ 
-      document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
       b.classList.add('active');
       applyFilters();
     });
     filtersEl.appendChild(b);
   });
 
-  // render grid
-  const grid = document.getElementById('menuGrid');
-  const emptyState = document.getElementById('emptyState');
-  function render(items){
-    grid.innerHTML='';
-    if(!items.length){ emptyState.style.display='block'; return } else emptyState.style.display='none';
-    items.forEach(it=>{
-      const card = document.createElement('div'); card.className='card';
-      // tag (optional)
-      if(it.tag){
-        const tag = document.createElement('div'); tag.className='tag'; tag.textContent=it.tag;
-        card.appendChild(tag);
-      }
-      const img = document.createElement('img'); img.loading='lazy'; img.src=it.img; img.alt=it.name;
-      const body = document.createElement('div'); body.className='card-body';
-      const title = document.createElement('div'); title.className='card-title';
-      const name = document.createElement('span'); name.textContent=it.name;
-      const price = document.createElement('span'); price.className='price'; price.textContent='₹'+it.price;
-      title.appendChild(name); title.appendChild(price);
-      const desc = document.createElement('div'); desc.className='card-desc'; desc.textContent=it.desc;
-      const actions = document.createElement('div'); actions.className='card-actions';
-      const add = document.createElement('button'); add.className='add-btn'; add.textContent='Add';
-      add.addEventListener('click',(e)=>{ e.stopPropagation(); addToCart(it); });
-      actions.appendChild(add);
-      body.appendChild(title); body.appendChild(desc); body.appendChild(actions);
-      card.appendChild(img); card.appendChild(body);
-
-      // click to open modal
-      card.addEventListener('click',()=> openModal(it));
+  // Render Grid Cards
+  function render(items) {
+    grid.innerHTML = '';
+    if (!items.length) {
+      emptyState.style.display = 'block';
+      return;
+    } 
+    emptyState.style.display = 'none';
+    
+    items.forEach(it => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      
+      const tagHTML = it.tag ? `<div class="tag">${it.tag}</div>` : '';
+      
+      card.innerHTML = `
+        ${tagHTML}
+        <img src="${it.img}" alt="${it.name}" loading="lazy">
+        <div class="card-body">
+          <div class="card-title">
+            <span>${it.name}</span>
+            <span class="price">₹${it.price}</span>
+          </div>
+          <div class="card-desc">${it.desc}</div>
+          <div class="card-actions">
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart(${it.id})">Add</button>
+          </div>
+        </div>
+      `;
+      // Click card to open modal
+      card.addEventListener('click', () => openModal(it));
       grid.appendChild(card);
     });
   }
 
-  // filters + search
+  // Filter Logic
   const searchInput = document.getElementById('searchInput');
-  searchInput.addEventListener('input', ()=> applyFilters());
+  searchInput.addEventListener('input', applyFilters);
 
-  function applyFilters(){
-    const activeCat = document.querySelector('.filter-btn.active').dataset.cat;
-    const q = (searchInput.value||'').trim().toLowerCase();
-    let items = MENU.slice();
-    if(activeCat && activeCat!=='All') items = items.filter(i=> i.category === activeCat);
-    if(q) items = items.filter(i=> (i.name+i.desc+i.category).toLowerCase().includes(q) );
-    render(items);
+  function applyFilters() {
+    const activeBtn = document.querySelector('.filter-btn.active');
+    const activeCat = activeBtn ? activeBtn.dataset.cat : 'All';
+    const q = (searchInput.value || '').trim().toLowerCase();
+    
+    let filtered = MENU.filter(i => {
+      const matchesCat = (activeCat === 'All') || (i.category === activeCat);
+      const matchesSearch = (i.name + i.desc + i.category).toLowerCase().includes(q);
+      return matchesCat && matchesSearch;
+    });
+    
+    render(filtered);
   }
 
-  // cart (simple)
+  // Cart Logic (Simple)
   let cartCount = 0;
   const cartCountEl = document.getElementById('cartCount');
-  function addToCart(item){
-    cartCount++; cartCountEl.textContent = cartCount;
-    // tiny toast
-    showToast(`${item.name} added to cart`);
-  }
-
-  // toast
-  let toastTimer;
-  function showToast(txt){
-    let t = document.getElementById('toast');
-    if(!t){
-      t = document.createElement('div'); t.id='toast';
-      t.style.position='fixed'; t.style.bottom='22px'; t.style.left='50%'; t.style.transform='translateX(-50%)';
-      t.style.background='rgba(0,0,0,0.8)'; t.style.color='#fff'; t.style.padding='10px 16px'; t.style.borderRadius='12px';
-      t.style.zIndex='9999'; t.style.fontWeight='700'; document.body.appendChild(t);
+  
+  function addToCart(id) {
+    // Find item by ID
+    const item = MENU.find(i => i.id === id);
+    if(item) {
+        cartCount++;
+        cartCountEl.textContent = cartCount;
+        console.log("Added to cart:", item.name);
+        alert(item.name + " added to cart!"); // Simple feedback
     }
-    t.textContent = txt; t.style.opacity=1;
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(()=> t.style.opacity=0,1500);
   }
 
-  // modal logic
+  // Modal Logic
   const modalBackdrop = document.getElementById('modalBackdrop');
   const modalImg = document.getElementById('modalImg');
   const modalTitle = document.getElementById('modalTitle');
   const modalDesc = document.getElementById('modalDesc');
   const modalPrice = document.getElementById('modalPrice');
-  const modalAdd = document.getElementById('modalAdd');
-  let currentModalItem = null;
+  const modalClose = document.getElementById('modalClose');
 
-  function openModal(item){
-    currentModalItem = item;
+  function openModal(item) {
     modalImg.src = item.img;
     modalTitle.textContent = item.name;
     modalDesc.textContent = item.desc;
     modalPrice.textContent = '₹' + item.price;
     modalBackdrop.classList.add('show');
   }
-  function closeModal(){ modalBackdrop.classList.remove('show'); currentModalItem = null; }
-  document.getElementById('modalClose').addEventListener('click', closeModal);
-  document.getElementById('modalClose2').addEventListener('click', closeModal);
-  modalAdd.addEventListener('click', ()=>{ if(currentModalItem){ addToCart(currentModalItem); closeModal(); } });
-  modalBackdrop.addEventListener('click', e=>{ if(e.target === modalBackdrop) closeModal(); });
 
-  // initial render
+  modalClose.addEventListener('click', () => modalBackdrop.classList.remove('show'));
+  modalBackdrop.addEventListener('click', (e) => {
+    if(e.target === modalBackdrop) modalBackdrop.classList.remove('show');
+  });
+
+  // Initial Render
   render(MENU);
-
-  // keyboard shortcut Esc to close modal
-  document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closeModal(); });
-
 </script>
+
 </body>
 </html>

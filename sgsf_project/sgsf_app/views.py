@@ -55,6 +55,7 @@ def home(request):
 @login_required
 def menu(request):
     items = MenuItem.objects.all()
+    print("DEBUG: Items in DB:", items.count())
     return render(request, "sgsf_app/menu.html", {"items": items})
 
 
