@@ -1,5 +1,5 @@
 {% load static %}
-<Doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -157,20 +157,20 @@
 </head>
 <body>
 
-<!-- NAVBAR -->
 <nav>
   <div class="logo">
-    <img src="god2.jpeg" alt="logo">
+    <img src="{% static 'images/god2.jpeg' %}" alt="logo">
     <div class="logo-text">Sri Gurudatta Swagruha Foods</div>
   </div>
 
   <div class="nav-right">
-    <button class="cart-btn" id="cartBtn">Cart 🧺 <span class="cart-badge" id="cartCount">0</span></button>
+  <a href="{% url 'view_cart' %}">
+   <button class="cart-btn">Cart 🧺 <span class="cart-badge" id="cartCount">{{ cart_count }}</span></button>
+  </a>
   </div>
 </nav>
 
 <main>
-  <!-- HERO -->
   <section class="hero">
     <div>
       <h1>Our Menu — Homemade & Pure</h1>
@@ -178,7 +178,6 @@
     </div>
   </section>
 
-  <!-- SEARCH + FILTERS -->
   <section class="controls" aria-label="search and categories">
     <div class="search" role="search">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="opacity:.6"><path d="M21 21l-4.35-4.35" stroke="#444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="6" stroke="#444" stroke-width="2"/></svg>
@@ -186,21 +185,17 @@
     </div>
 
     <div class="filters" id="filters">
-      <!-- buttons added by JS -->
-    </div>
+      </div>
   </section>
 
-  <!-- MENU GRID -->
   <section class="menu-section">
     <div class="grid" id="menuGrid">
-      <!-- cards inserted by JS -->
-    </div>
+      </div>
 
     <div id="emptyState" class="empty" style="display:none">No items found. Try a different filter.</div>
   </section>
 </main>
 
-<!-- MODAL -->
 <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true">
     <div style="position:relative;">
@@ -221,7 +216,6 @@
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-content">
     <h2>Sri Gurudatta Swagruha Foods</h2>
@@ -241,21 +235,17 @@
     {% for item in items %}
       {
         id: {{ item.id }},
-        // use escapejs to prevent crashes from quotes or special characters
         category: "{{ item.category|escapejs }}",
         name: "{{ item.name|escapejs }}",
         desc: "{{ item.description|escapejs }}", 
         price: {{ item.price }},
-        // This checks: Does the item have an image? 
-        // YES -> Use item.image.url
-        // NO  -> Use the static fallback image
         img: "{% if item.image %}{{ item.image.url }}{% else %}{% static 'images/god.jpg' %}{% endif %}",
         tag: "{{ item.tag|default:'Veg'|escapejs }}"
       },
     {% endfor %}
   ];
 
-  console.log("DEBUG: Menu Items Loaded:", MENU); // Check your browser console for this!
+  console.log("DEBUG: Menu Items Loaded:", MENU);
 
   // ---------------------------------------------
   // RENDER LOGIC
@@ -266,7 +256,7 @@
   const emptyState = document.getElementById('emptyState');
 
   // Render Filter Buttons
-  filtersEl.innerHTML = ''; // Clear existing buttons
+  filtersEl.innerHTML = '';
   categories.forEach(cat => {
     const b = document.createElement('button');
     b.className = 'filter-btn' + (cat === 'All' ? ' active' : '');
@@ -295,6 +285,7 @@
       
       const tagHTML = it.tag ? `<div class="tag">${it.tag}</div>` : '';
       
+      // CHANGED: "Add" button now calls onclick function, NOT href
       card.innerHTML = `
         ${tagHTML}
         <img src="${it.img}" alt="${it.name}" loading="lazy">
@@ -309,7 +300,6 @@
           </div>
         </div>
       `;
-      // Click card to open modal
       card.addEventListener('click', () => openModal(it));
       grid.appendChild(card);
     });
@@ -333,19 +323,41 @@
     render(filtered);
   }
 
-  // Cart Logic (Simple)
-  let cartCount = 0;
-  const cartCountEl = document.getElementById('cartCount');
-  
+  // ---------------------------------------------
+  // NEW AJAX ADD TO CART LOGIC
+  // ---------------------------------------------
   function addToCart(id) {
-    // Find item by ID
-    const item = MENU.find(i => i.id === id);
-    if(item) {
-        cartCount++;
-        cartCountEl.textContent = cartCount;
-        console.log("Added to cart:", item.name);
-        alert(item.name + " added to cart!"); // Simple feedback
-    }
+    // 1. Fetch backend without reloading
+    fetch(`/add-to-cart/${id}/`)
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === 'success') {
+            // 2. Update badge number
+            document.getElementById('cartCount').textContent = data.cart_count;
+            // 3. Show Popup
+            showToast("Item added to cart! 🛒");
+        }
+    })
+    .catch(err => console.error("Error adding to cart:", err));
+  }
+
+  // Toast Notification Helper
+  function showToast(message) {
+      const toast = document.createElement('div');
+      toast.style.position = 'fixed';
+      toast.style.bottom = '30px';
+      toast.style.left = '50%';
+      toast.style.transform = 'translateX(-50%)';
+      toast.style.background = 'rgba(0,0,0,0.85)';
+      toast.style.color = '#fff';
+      toast.style.padding = '12px 24px';
+      toast.style.borderRadius = '30px';
+      toast.style.fontWeight = 'bold';
+      toast.style.zIndex = '9999';
+      toast.style.boxShadow = '0 5px 15px rgba(0,0,0,0.3)';
+      toast.innerText = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2500);
   }
 
   // Modal Logic
@@ -355,16 +367,26 @@
   const modalDesc = document.getElementById('modalDesc');
   const modalPrice = document.getElementById('modalPrice');
   const modalClose = document.getElementById('modalClose');
+  const modalAdd = document.getElementById('modalAdd'); // Get the Modal Add Button
 
   function openModal(item) {
     modalImg.src = item.img;
     modalTitle.textContent = item.name;
     modalDesc.textContent = item.desc;
     modalPrice.textContent = '₹' + item.price;
+    
+    // Wire up the Modal "Add" button to the current item
+    modalAdd.onclick = function() {
+        addToCart(item.id);
+        modalBackdrop.classList.remove('show'); // Close modal after adding
+    };
+
     modalBackdrop.classList.add('show');
   }
 
   modalClose.addEventListener('click', () => modalBackdrop.classList.remove('show'));
+  document.getElementById('modalClose2').addEventListener('click', () => modalBackdrop.classList.remove('show'));
+
   modalBackdrop.addEventListener('click', (e) => {
     if(e.target === modalBackdrop) modalBackdrop.classList.remove('show');
   });

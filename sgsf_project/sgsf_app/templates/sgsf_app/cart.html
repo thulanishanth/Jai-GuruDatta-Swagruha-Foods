@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Your Cart - SGSF Foods</title>
+<style>
+  /* --- Reusing your Gradient Navbar Style --- */
+  :root{ --accent:#ff5722; }
+  body { font-family: Arial, sans-serif; margin: 0; background: #f9f9f9; }
+  
+  nav{
+    width:100%; padding:12px 28px; display:flex; align-items:center; justify-content:space-between;
+    position:fixed; top:0; z-index:900;
+    background: linear-gradient(90deg, #ff0000,#ff7f00,#ffff00,#00ff00,#0000ff,#4b0082,#8b00ff);
+    background-size:600% 600%; animation:rainbow 10s linear infinite; color:#fff;
+  }
+  @keyframes rainbow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+  .container { max-width: 800px; margin: 100px auto; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+  
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  th { text-align: left; padding: 10px; border-bottom: 2px solid #eee; color: #555; }
+  td { padding: 15px 10px; border-bottom: 1px solid #eee; vertical-align: middle; }
+  
+  img.cart-img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
+  
+  .total-box { text-align: right; margin-top: 20px; font-size: 20px; font-weight: bold; color: #333; }
+  
+  .btn { text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; display: inline-block; }
+  .btn-checkout { background: var(--accent); color: white; margin-left: 10px; }
+  .btn-back { background: #ddd; color: #333; }
+  
+  .remove-link { color: red; font-size: 12px; text-decoration: none; font-weight: bold; }
+
+  /* Style for the Qty buttons */
+  .qty-box { display: flex; align-items: center; gap: 10px; }
+  .qty-btn { background: #eee; color: #333; padding: 5px 12px; text-decoration: none; border-radius: 6px; font-weight: bold; transition: 0.2s; }
+  .qty-btn:hover { background: #ddd; }
+</style>
+</head>
+<body>
+
+<nav>
+  <h2 style="color:white; margin:0;">SGSF Cart 🛒</h2>
+  <a href="{% url 'menu' %}" style="color:white; text-decoration:none; font-weight:bold;">Back to Menu</a>
+</nav>
+
+<div class="container">
+  <h1>Your Order</h1>
+
+  {% if cart_items %}
+    <table>
+      <thead>
+        <tr>
+            <th style="width: 40%;">Item</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th>Total</th>
+            <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in cart_items %}
+        <tr>
+            <td style="display: flex; align-items: center; gap: 10px;">
+                {% if item.image %}
+                    <img src="{{ item.image.url }}" class="cart-img">
+                {% else %}
+                    <img src="{% static 'images/god.jpg' %}" class="cart-img">
+                {% endif %}
+                <span>{{ item.name }}</span>
+            </td>
+
+            <td>₹{{ item.price }}</td>
+
+            <td>
+                <div class="qty-box">
+                    <a href="{% url 'decrease_cart' item.id %}" class="qty-btn">-</a>
+                    <span style="font-weight:bold; font-size:16px;">{{ item.qty }}</span>
+                    <a href="{% url 'increase_cart' item.id %}" class="qty-btn">+</a>
+                </div>
+            </td>
+
+            <td>₹{{ item.total }}</td>
+
+            <td>
+                <a href="{% url 'remove_from_cart' item.id %}" class="remove-link">Remove</a>
+            </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="total-box">
+        Grand Total: <span style="color: #ff5722;">₹{{ grand_total }}</span>
+        <br><br>
+        <a href="{% url 'menu' %}" class="btn btn-back">Add More</a>
+        <a href="#" class="btn btn-checkout">Checkout</a>
+    </div>
+
+  {% else %}
+    <div style="text-align:center; padding: 40px;">
+        <h3>Your cart is empty! 🍛</h3>
+        <p>Go add some tasty food.</p>
+        <a href="{% url 'menu' %}" class="btn btn-checkout">Go to Menu</a>
+    </div>
+  {% endif %}
+</div>
+
+</body>
+</html>
