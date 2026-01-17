@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Checkout - SGSF Foods</title>
+<style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 50px; }
+    .checkout-box { 
+        max_width: 500px; margin: 0 auto; background: white; padding: 30px; 
+        border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); 
+    }
+    h2 { color: #ff5722; text-align: center; }
+    .form-input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px; }
+    .total-price { font-size: 20px; font-weight: bold; text-align: center; margin: 20px 0; }
+    .btn-place { 
+        width: 100%; padding: 12px; background: #28a745; color: white; border: none; 
+        font-size: 18px; font-weight: bold; border-radius: 6px; cursor: pointer; 
+    }
+    .btn-place:hover { background: #218838; }
+</style>
+</head>
+<body>
+    <div class="checkout-box">
+        <h2>Confirm Your Order</h2>
+        <p style="text-align:center;">You are about to pay: 
+            <span style="font-weight:bold;">₹{{ grand_total }}</span>
+        </p>
+
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn-place">Place Order 🚀</button>
+        </form>
+        
+        <br>
+        <div style="text-align:center;">
+            <a href="{% url 'view_cart' %}" style="text-decoration:none; color:#666;">← Back to Cart</a>
+        </div>
+    </div>
+</body>
+</html>

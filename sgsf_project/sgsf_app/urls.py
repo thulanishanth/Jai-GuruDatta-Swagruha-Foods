@@ -21,4 +21,7 @@ urlpatterns = [
     # -------------------------
     path('about/', views.about, name='about'),        # About pages
     path('profile/', views.profile, name='profile'),  # Profile page (shows logged-in user)
+
+    path('checkout/', views.checkout, name='checkout'),
+    path('order-success/', views.order_success, name='order_success'),
 ]
