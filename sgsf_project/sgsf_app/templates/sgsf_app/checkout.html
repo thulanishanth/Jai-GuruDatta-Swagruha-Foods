@@ -27,7 +27,7 @@
             <span style="font-weight:bold;">₹{{ grand_total }}</span>
         </p>
 
-        <form method="POST">
+        <form method="POST" action="{% url 'checkout' %}">
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit" class="btn-place">Place Order 🚀</button>
@@ -37,6 +37,6 @@
         <div style="text-align:center;">
             <a href="{% url 'view_cart' %}" style="text-decoration:none; color:#666;">← Back to Cart</a>
         </div>
-    </div>
+    </div>  
 </body>
 </html>
